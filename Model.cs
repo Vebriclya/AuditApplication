@@ -5,9 +5,9 @@ using System.Collections.Generic;
 public class AuditContext : DbContext
 {
     public DbSet<Audit> Audits { get; set; }
-    public DbSet <Section> Sections { get; set; }
-    public DbSet <Question> Questions { get; set; }
-    public DbSet <Response> Responses { get; set; }
+    public DbSet<Section> Sections { get; set; }
+    public DbSet<Question> Questions { get; set; }
+    public DbSet<Response> Responses { get; set; }
 
     public string DbPath { get; }
 
@@ -16,12 +16,12 @@ public class AuditContext : DbContext
         var folder = Environment.SpecialFolder.LocalApplicationData;
         var path = Environment.GetFolderPath(folder);
         DbPath = System.IO.Path.Join(path, "audit.db");
+        Console.WriteLine($"Attempting to create/access database at: {DbPath}");
     }
 
     protected override void OnConfiguring(DbContextOptionsBuilder options)
-    {
-        options.UseSqlite("Data Source={DbPath}");
-    }
+        => options.UseSqlite($"Data Source={DbPath}")
+        .LogTo(Console.WriteLine, Microsoft.Extensions.Logging.LogLevel.Information);
 }
 
 public class Audit
@@ -29,7 +29,7 @@ public class Audit
     public int AuditId { get; set; }
     public string Name { get; set; }
     public DateTime CreatedDate { get; set; }
-    public List<Section> Sections { get; set; }
+    public List<Section> Sections { get; set; } = new List<Section>();
 }
 
 public class Section
